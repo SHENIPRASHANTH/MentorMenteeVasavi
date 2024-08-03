@@ -1,0 +1,24 @@
+{
+  "name": "mentor-mentee",
+  "version": "1.0.0",
+  "description": "A mentor-mentee management system",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js"
+  },
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "chart.js": "^4.4.3",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "express-session": "^1.18.0",
+    "http": "^0.0.1-security",
+    "mongoose": "^5.13.22",
+    "multer": "^1.4.5-lts.1",
+    "nodemailer": "^6.9.14",
+    "path": "^0.12.7",
+    "socket.io": "^4.7.5",
+    "twilio": "^5.2.2"
+  }
+}

@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Queries</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="navbar">
+        <a href="index.html">Home</a>
+        <h1>Mentor-Mentee</h1>
+        <div>
+            <a href="registerMentor.html">Mentor Registration</a>
+            <a href="registerStudent.html">Student Registration</a>
+        </div>
+    </div>
+
+    <div class="container">
+        <h2>Manage Queries</h2>
+        <div id="query-list">
+            <!-- Queries will be loaded here -->
+        </div>
+        <div class="footer">
+            &copy; 2024 Mentor-Mentee Project. All rights reserved.
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            try {
+                const response = await fetch('/api/queries');
+                const queries = await response.json();
+                const queryList = document.getElementById('query-list');
+
+                queries.forEach(query => {
+                    const div = document.createElement('div');
+                    div.innerHTML = `
+                        <p><strong>Student:</strong> ${query.studentName}</p>
+                        <p><strong>Query:</strong> ${query.queryText}</p>
+                        <p><strong>Status:</strong> ${query.isResolved ? 'Resolved' : 'Pending'}</p>
+                        <button onclick="respondToQuery('${query._id}')">Respond</button>
+                    `;
+                    queryList.appendChild(div);
+                });
+            } catch (error) {
+                console.error('Error fetching queries:', error);
+            }
+        });
+
+        async function respondToQuery(queryId) {
+            const responseText = prompt('Enter your response:');
+            if (responseText) {
+                try {
+                    const response = await fetch(`/api/queries/${queryId}/respond`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ response: responseText })
+                    });
+
+                    const result = await response.json();
+                    if (response.ok) {
+                        alert('Response submitted successfully');
+                        location.reload();
+                    } else {
+                        alert(`Error: ${result.error}`);
+                    }
+                } catch (error) {
+                    console.error('Error responding to query:', error);
+                }
+            }
+        }
+    </script>
+</body>
+</html>

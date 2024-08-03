@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Meeting</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #f4f6f9;
+            color: #333;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 600px;
+            margin: 20px 0;
+        }
+
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 30px;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            font-weight: 500;
+            margin-bottom: 8px;
+            color: #2c3e50;
+        }
+
+        input[type="text"],
+        input[type="date"],
+        input[type="url"],
+        select,
+        textarea {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+            font-family: 'Roboto', sans-serif;
+            color: #333;
+        }
+
+        textarea {
+            resize: vertical;
+        }
+
+        button {
+            background-color: #3498db;
+            color: #fff;
+            padding: 12px 25px;
+            font-size: 16px;
+            font-weight: 500;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            align-self: center;
+            margin-top: 10px;
+        }
+
+        button:hover {
+            background-color: #2980b9;
+        }
+
+        .button {
+            text-decoration: none;
+            color: #3498db;
+            margin-bottom: 20px;
+            display: inline-block;
+            transition: color 0.3s;
+        }
+
+        .button:hover {
+            color: #2980b9;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 600px) {
+            .container {
+                padding: 20px;
+            }
+
+            button {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <a href="mentorDashboard.html" class="button">Back</a>
+    <div class="container">
+        <h1>Create Meeting</h1>
+        <form id="create-meeting-form">
+            <label for="title">Meeting Title:</label>
+            <input type="text" id="title" name="title" required>
+
+            <label for="student">Select Students:</label>
+            <select id="student" name="students" multiple required>
+                <!-- Options will be populated by JavaScript -->
+            </select>
+
+            <label for="date">Meeting Date:</label>
+            <input type="date" id="date" name="date" required>
+
+            <label for="time">Meeting Time:</label>
+            <select id="time" name="time" required>
+                <!-- Options will be populated by JavaScript -->
+            </select>
+
+            <label for="description">Description:</label>
+            <textarea id="description" name="description" rows="4"></textarea>
+
+            <label for="zoomLink">Zoom Link:</label>
+            <input type="url" id="zoomLink" name="zoomLink" placeholder="Enter Zoom link" required>
+
+            <button type="submit">Create Meeting</button>
+        </form>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            try {
+                const response = await fetch('/api/mentors/me');
+                if (!response.ok) throw new Error('Failed to fetch mentor data');
+                const mentor = await response.json();
+                const mentorId = mentor._id;
+
+                const studentsResponse = await fetch(`/api/mentors/${mentorId}/students`);
+                if (!studentsResponse.ok) throw new Error('Failed to fetch students');
+                const students = await studentsResponse.json();
+
+                const studentSelect = document.getElementById('student');
+                students.forEach(student => {
+                    const option = document.createElement('option');
+                    option.value = student._id;
+                    option.textContent = student.name;
+                    studentSelect.appendChild(option);
+                });
+
+                const timeSelect = document.getElementById('time');
+                for (let hour = 1; hour <= 12; hour++) {
+                    ['AM', 'PM'].forEach(period => {
+                        ['00', '30'].forEach(minutes => {
+                            const option = document.createElement('option');
+                            const formattedHour = hour < 10 ? '0' + hour : hour;
+                            option.value = `${formattedHour}:${minutes} ${period}`;
+                            option.textContent = `${formattedHour}:${minutes} ${period}`;
+                            timeSelect.appendChild(option);
+                        });
+                    });
+                }
+
+                document.getElementById('create-meeting-form').addEventListener('submit', async (event) => {
+                    event.preventDefault();
+
+                    const formData = new FormData(event.target);
+                    const data = {
+                        title: formData.get('title'),
+                        date: formData.get('date'),
+                        time: formData.get('time'),
+                        description: formData.get('description'),
+                        zoomLink: formData.get('zoomLink'),
+                        mentorId: mentorId,
+                        studentIds: formData.getAll('students')
+                    };
+
+                    try {
+                        const response = await fetch('/api/meetings/create', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(data)
+                        });
+
+                        if (response.ok) {
+                            alert('Meeting created successfully');
+                            window.location.href = 'scheduledMeetings.html';
+                        } else {
+                            const errorText = await response.text();
+                            console.error('Failed to create meeting:', errorText);
+                            alert('Failed to create meeting');
+                        }
+                    } catch (error) {
+                        console.error('Error creating meeting:', error);
+                        alert('Error creating meeting');
+                    }
+                });
+            } catch (error) {
+                console.error('Error initializing form:', error);
+                alert('Error initializing form');
+            }
+        });
+    </script>
+</body>
+</html>

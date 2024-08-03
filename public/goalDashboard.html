@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Goal Dashboard</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <h1>Your Goals</h1>
+    <div id="goals-container"></div>
+
+    <script>
+        async function fetchGoals() {
+            try {
+                const response = await fetch('/api/goals/mentee/YOUR_MENTEE_ID'); // Replace YOUR_MENTEE_ID with the actual ID
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                const goals = await response.json();
+
+                const container = document.getElementById('goals-container');
+                container.innerHTML = ''; // Clear the container before adding new goals
+
+                goals.forEach(goal => {
+                    const div = document.createElement('div');
+                    div.innerHTML = `
+                        <h2>${goal.title}</h2>
+                        <p>${goal.description}</p>
+                        <p>Deadline: ${new Date(goal.deadline).toLocaleDateString()}</p>
+                        <p>Status: ${goal.status}</p>
+                    `;
+                    container.appendChild(div);
+                });
+            } catch (error) {
+                console.error('Error fetching goals:', error);
+            }
+        }
+
+        fetchGoals();
+    </script>
+</body>
+</html>

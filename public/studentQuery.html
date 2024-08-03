@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Real-Time Chat</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .chat-container {
+            display: flex;
+            flex-direction: column;
+            height: 50vh;
+            max-width: 500px;
+            margin: 0 auto;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .messages {
+            flex: 1;
+            padding: 10px;
+            overflow-y: auto;
+            background: #f9f9f9;
+            border-bottom: 1px solid #ccc;
+        }
+
+        .message {
+            margin-bottom: 10px;
+            padding: 8px;
+            border-radius: 5px;
+        }
+
+        .message.sent {
+            background: #d1ffd1;
+            text-align: right;
+        }
+
+        .message.received {
+            background: #e0e0e0;
+        }
+
+        .input-container {
+            display: flex;
+            padding: 10px;
+            border-top: 1px solid #ccc;
+        }
+
+        input[type="text"], input[type="file"] {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        button {
+            padding: 5px;
+            border: none;
+            width: 50px;
+            background-color: #007bff;
+            color: white;
+            cursor: pointer;
+        }
+        
+        .upload-container {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="chat-container">
+        <div class="messages" id="messages"></div>
+        <div class="input-container">
+            <input type="text" id="messageInput" placeholder="Type your message here..." />
+            <button id="sendButton">Send</button>
+        </div>
+        <div class="upload-container">
+            <input type="file" id="fileInput" />
+            <button id="uploadButton">Upload</button>
+        </div>
+    </div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        const socket = io();
+
+        const messagesContainer = document.getElementById('messages');
+        const messageInput = document.getElementById('messageInput');
+        const sendButton = document.getElementById('sendButton');
+        const fileInput = document.getElementById('fileInput');
+        const uploadButton = document.getElementById('uploadButton');
+
+        function appendMessage(message, type) {
+            const messageElement = document.createElement('div');
+            messageElement.classList.add('message');
+            messageElement.classList.add(type);
+            messageElement.textContent = message;
+            messagesContainer.appendChild(messageElement);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight; // Auto-scroll to the bottom
+        }
+
+        socket.on('receive_message', (data) => {
+            appendMessage(data.message, 'received');
+        });
+
+        sendButton.addEventListener('click', () => {
+            const message = messageInput.value;
+            if (message.trim()) {
+                appendMessage(message, 'sent');
+                socket.emit('send_message', { message });
+                messageInput.value = '';
+            }
+        });
+
+        messageInput.addEventListener('keypress', (event) => {
+            if (event.key === 'Enter') {
+                sendButton.click();
+            }
+        });
+
+        uploadButton.addEventListener('click', async () => {
+            const file = fileInput.files[0];
+            if (file) {
+                const formData = new FormData();
+                formData.append('file', file);
+
+                try {
+                    const response = await fetch('/upload', {
+                        method: 'POST',
+                        body: formData
+                    });
+                    const result = await response.json();
+                    if (response.ok) {
+                        alert('File uploaded successfully');
+                        socket.emit('send_message', { message: `File uploaded: ${result.file.filename}` });
+                    } else {
+                        alert(`Error: ${result.error}`);
+                    }
+                } catch (error) {
+                    console.error('Error uploading file:', error);
+                }
+            }
+        });
+    </script>
+</body>
+</html>

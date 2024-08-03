@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mentor Mentee System</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap">
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Roboto', sans-serif;
+            color: #333;
+            background-color: #f6ffff;
+            /* Update the path to your background image */
+            /* background-image: url('hello.jpeg');  */
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-position: center;
+        }
+
+
+        nav {
+            background-color: #ffffff;
+            color: #333;
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+        }
+
+        nav .logo {
+            font-size: 1.8em;
+            font-weight: bold;
+            color: #0056b3;
+        }
+        
+        nav ul {
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            gap: 20px;
+        }
+
+        nav ul li a {
+            text-decoration: none;
+            color: #333;
+            font-size: 1em;
+            padding: 10px 15px;
+            border-radius: 5px;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        nav ul li a:hover {
+            background-color: #3381d5;
+            color: #fff;
+        }
+
+        .hero {
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            background-size: cover;
+            background-position: center;
+            color: #fff;
+            padding: 0 20px;
+        }
+
+        .hero-content {
+            max-width: 1200px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 20px;
+            border-radius: 10px;
+            gap: 20px;
+            color: black;
+        }
+
+        .hero-text {
+            flex: 1;
+        }
+
+        .hero-image {
+            flex: 1;
+            max-width: 500px;
+        }
+
+        .hero h1 {
+            font-size: 2.5em;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+
+        .hero p {
+            font-size: 1.2em;
+            line-height: 1.6;
+            margin: 0 auto 30px;
+        }
+
+        .hero button {
+            padding: 12px 30px;
+            font-size: 1em;
+            background-color: #0056b3;
+            border: none;
+            border-radius: 5px;
+            color: #fff;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .hero button:hover {
+            background-color: #003d7a;
+        }
+
+        .section {
+            padding: 60px 20px;
+            text-align: center;
+            background-color: #ffffc6;
+            color: #333;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+            border-radius: 8px;
+        }
+
+        .section h2 {
+            font-size: 2.5em;
+            margin-bottom: 20px;
+            color: #0056b3;
+        }
+
+        .section p {
+            font-size: 1.2em;
+            line-height: 1.6;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .carousel {
+            position: relative;
+            max-width: 35%;
+            margin: 20px auto;
+            overflow: hidden;
+            border-radius: 8px;
+            height: 50%;
+        }
+
+        .carousel-images {
+            display: flex;
+            transition: transform 0.9s ease-in-out;
+        }
+
+        .carousel-images img {
+            width: 35%;
+            height: 40%;
+            flex: 0 0 100%;
+        }
+
+        .carousel-button {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background-color: rgba(255, 252, 252, 0.5);
+            color: white;
+            border: none;
+            padding: 10px;
+            cursor: pointer;
+            z-index: 10;
+        }
+
+        .carousel-button.prev {
+            left: 10px;
+        }
+
+        .carousel-button.next {
+            right: 10px;
+        }
+
+        .footer {
+            background-color: #ffffff;
+            color: #333;
+            padding: 20px 0;
+            text-align: center;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            border-top: 1px solid #e0e0e0;
+        }
+
+        .footer p {
+            margin: 0;
+            font-size: 1em;
+        }
+
+        .footer a {
+            color: #0056b3;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        .designer-section {
+            background-color: #ffffff;
+            color: #333;
+            padding: 60px 20px;
+            text-align: center;
+            border-top: 1px solid #e0e0e0;
+            margin-bottom: 20px;
+        }
+
+        .designer-section h2 {
+            font-size: 2.5em;
+            margin-bottom: 20px;
+            color: #0056b3;
+        }
+
+        .designer-section p {
+            font-size: 1.2em;
+            line-height: 1.6;
+            margin: 0 auto;
+        }
+
+        .designer-section a {
+            color: #0056b3;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .designer-section a:hover {
+            text-decoration: underline;
+        }
+        .about-list ul {
+    list-style-type: disc;
+    padding-left: 20px;
+    font-size: 1.1em;
+    line-height: 1.8;
+    max-width: 800px;
+    margin: 0 auto;
+    text-align: left;
+}
+
+.about-list ul li {
+    margin-bottom: 10px;
+}
+
+.about-list ul li strong {
+    color: #0056b3;
+}
+    
+.modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.4);
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: 15% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+            max-width: 500px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .modal-content h2 {
+            margin-top: 0;
+        }
+
+        .modal-content a {
+            display: block;
+            margin: 10px 0;
+            padding: 10px;
+            background-color: #0056b3;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+
+        .modal-content a:hover {
+            background-color: #003d7a;
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="logo">Mentor Mentee System</div>
+        <ul>
+            <li><a href="/"><i class="fas fa-home"></i> Home</a></li>
+            <li><a href="#about"><i class="fas fa-info-circle"></i> About</a></li>
+            <li><a href="#features"><i class="fas fa-star"></i> Features</a></li>
+            <li><a href="#college"><i class="fas fa-school"></i> Our College</a></li>
+            <li><a href="#" onclick="openModal()"><i class="fas fa-user-plus"></i> Sign Up</a></li>
+            <li><a href="login.html"><i class="fas fa-sign-in-alt"></i> Sign In</a></li>
+        </ul>
+    </nav>
+
+    <div class="hero">
+        <div class="hero-content">
+            <div class="hero-text">
+                <h1>Empowering Students and Mentors at Vasavi College</h1>
+                <p>Our Mentor Mentee System is designed to connect students with experienced mentors, facilitating academic and personal growth. Monthly meetings will be scheduled, and feedback will be gathered to ensure continuous improvement and success. This initiative is being implemented at Vasavi College of Engineering, Hyderabad, to foster meaningful interactions between teachers and students.</p>
+                <button onclick="speakMessage('Connecting Students and Mentors for Real Growth');">Discover More</button>
+            </div>
+            <div class="hero-image">
+                <img src="vasavi.gif" alt="Mentorship Image">
+            </div>
+        </div>
+    </div>
+
+    <div class="section about" id="about">
+        <h2>About Us</h2>
+        <p>
+            The Mentor Mentee System is an innovative platform designed to bridge the gap between students and experienced mentors. At Vasavi College of Engineering, Hyderabad, our aim is to enhance the academic and personal growth of students through structured and meaningful interactions with their mentors. This system offers a comprehensive approach to mentorship by integrating various features to streamline communication, track progress, and provide valuable feedback.
+        </p>
+        <div class="about-list">
+            <ul>
+                <li><strong>Purpose:</strong> To foster a supportive learning environment by connecting students with mentors who can provide guidance and support.</li>
+                <li><strong>Features:</strong> Includes efficient scheduling of meetings, real-time progress tracking, secure messaging, and personalized feedback.</li>
+                <li><strong>Impact:</strong> Enhances student engagement and academic performance while also providing mentors with the tools to track and support their mentees effectively.</li>
+                <li><strong>Implementation:</strong> Currently implemented at Vasavi College of Engineering to improve student-mentor interactions and overall academic success.</li>
+                <li><strong>Vision:</strong> To create a dynamic and interactive platform that supports the holistic development of students and leverages the experience of mentors to drive academic and personal growth.</li>
+            </ul>
+        </div>
+    </div>
+    
+
+    <div class="section features" id="features">
+        <h2>Features</h2>
+        <p>
+            - Efficient scheduling and management of mentorship meetings<br>
+            - Real-time progress tracking and feedback<br>
+            - Secure communication channels for mentors and students<br>
+            - Comprehensive dashboard for monitoring and analytics
+        </p>
+    </div>
+
+    <div class="section college" id="college">
+        <h2>About Vasavi College of Engineering</h2>
+        <p>
+            Vasavi College of Engineering, Hyderabad, is a prestigious institution known for its excellence in technical education. Established with the vision to foster innovation and research, the college offers a wide range of engineering programs and provides state-of-the-art facilities for its students. Our commitment to academic excellence and holistic development is reflected in our strong industry connections and vibrant campus life.
+        </p>
+        <div class="about-list">
+            <ul>
+                <li><strong>Institution:</strong> Vasavi College of Engineering, Hyderabad</li>
+                <li><strong>Established:</strong> 1981</li>
+                <li><strong>Programs:</strong> Various undergraduate and postgraduate engineering programs</li>
+                <li><strong>Vision:</strong> To foster innovation, research, and academic excellence</li>
+                <li><strong>Facilities:</strong> Modern classrooms, state-of-the-art laboratories, and a vibrant campus life</li>
+            </ul>
+        </div>
+        <div class="carousel">
+            <div class="carousel-images">
+                <img src="vasaviname.png" alt="Vasavi College Image 1" style="width: 50px; height: 400px;">
+                <img src="new.jpg" alt="Vasavi College Image 2" style="width: 50px; height: 400px;">
+            </div>
+            
+            <button class="carousel-button prev" onclick="prevSlide()">&#10094;</button>
+            <button class="carousel-button next" onclick="nextSlide()">&#10095;</button>
+        </div>
+       
+    </div>
+
+    <div class="designer-section">
+        <h2>About the Designer</h2>
+        <p>
+            Designed by Sheni Prashanth, this website aims to offer a user-friendly experience for mentors and mentees alike. Sheni's passion for web development and dedication to creating impactful solutions is evident in this project. You can connect with Sheni on <a href="https://www.linkedin.com/in/sheni-prashanth" target="_blank">LinkedIn</a>.
+        </p>
+    </div>
+    <div id="signupModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <h2>Sign Up As</h2>
+            <a href="registerMentor.html">Mentor</a>
+            <a href="registerStudent.html">Student</a>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <p>&copy; 2024 Vasavi College of Engineering. All rights reserved.</p>
+    </footer>
+
+    <script>
+        let currentIndex = 0;
+        const slides = document.querySelectorAll('.carousel-images img');
+
+        function showSlide(index) {
+            const totalSlides = slides.length;
+            if (index >= totalSlides) {
+                currentIndex = 0;
+            } else if (index < 0) {
+                currentIndex = totalSlides - 1;
+            } else {
+                currentIndex = index;
+            }
+            const offset = -currentIndex * 100;
+            document.querySelector('.carousel-images').style.transform = `translateX(${offset}%)`;
+        }
+
+        function nextSlide() {
+            showSlide(currentIndex + 1);
+        }
+
+        function prevSlide() {
+            showSlide(currentIndex - 1);
+        }
+
+        setInterval(nextSlide, 5000); // Auto-slide every 5 seconds
+        function openModal() {
+            document.getElementById('signupModal').style.display = 'block';
+        }
+
+        function closeModal() {
+            document.getElementById('signupModal').style.display = 'none';
+        }
+
+        // Close the modal when clicking outside of it
+        window.onclick = function(event) {
+            var modal = document.getElementById('signupModal');
+            if (event.target == modal) {
+                modal.style.display = 'none';
+            }
+        }
+
+        // Text-to-speech function for the hero button
+        function speakMessage(message) {
+            var msg = new SpeechSynthesisUtterance(message);
+            window.speechSynthesis.speak(msg);
+        }
+    </script>
+</body>
+</html>

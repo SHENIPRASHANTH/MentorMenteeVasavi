@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Queries List</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <h1>Queries</h1>
+    <div id="queries-list"></div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        const socket = io();
+        const queriesList = document.getElementById('queries-list');
+
+        async function fetchQueries() {
+    try {
+        const response = await fetch(`/api/queries?mentorName=${encodeURIComponent(mentorName)}`);
+        if (!response.ok) throw new Error('Failed to fetch queries');
+
+        const queries = await response.json();
+        const queriesList = document.getElementById('queries-list');
+        queriesList.innerHTML = queries.length > 0 
+            ? queries.map(query => `
+                <div class="card">
+                    <strong>Student Name:</strong> ${query.studentName} <br>
+                    <strong>Query:</strong> ${query.queryText} <br>
+                    <strong>Status:</strong> ${query.status} <br>
+                    <small>Submitted on: ${new Date(query.createdAt).toLocaleString()}</small>
+                </div>
+            `).join('')
+            : '<p>No queries found</p>';
+    } catch (error) {
+        console.error('Error fetching queries:', error);
+        alert('An error occurred while fetching queries.');
+    }
+}
+
+    </script>
+</body>
+</html>

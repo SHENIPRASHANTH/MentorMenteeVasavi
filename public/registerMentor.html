@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mentor Registration</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f4f4;
+            color: #333;
+        }
+
+        .navbar {
+            background-color: #2d3e50;
+            padding: 10px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            color: #fff;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .navbar h1 {
+            margin: 0;
+            font-size: 1.5rem;
+            flex-grow: 1;
+            text-align: center;
+        }
+
+        .navbar a {
+            color: #fff;
+            text-decoration: none;
+            font-size: 1rem;
+            margin: 0 10px;
+        }
+
+        .navbar a:hover {
+            text-decoration: underline;
+        }
+
+        .container {
+            padding: 20px;
+            max-width: 800px;
+            margin: 30px auto;
+            background: #fff;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(100px);
+            }
+            to {
+                opacity: 0.9;
+                transform: translateY(0px);
+            }
+        }
+
+        h2 {
+            font-size: 2rem;
+            margin-bottom: 20px;
+            color: #2d3e50;
+        }
+
+        .form-wrapper {
+            background-color: #e9ecef;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        form {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: space-between;
+        }
+
+        .form-group {
+            flex: 1 1 45%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            font-weight: bold;
+            color: #2d3e50;
+            margin-bottom: 5px;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        input[type="password"] {
+            padding: 12px;
+            border: 1px solid #ced4da;
+            border-radius: 5px;
+            font-size: 1em;
+            background-color: #fff;
+            color: #495057;
+        }
+
+        button {
+            padding: 15px;
+            font-size: 1.1em;
+            background-color: #2d3e50;
+            border: none;
+            border-radius: 5px;
+            color: #fff;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            flex: 1 1 100%;
+        }
+
+        button:hover {
+            background-color: #1a252f;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 0.9em;
+            color: #6c757d;
+        }
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <a href="index.html">Home</a>
+        <pre><h1>                     Mentor-Mentee</h1></pre>
+        <div>
+            <a href="registerMentor.html">Mentor Registration</a>
+            <a href="registerStudent.html">Student Registration</a>
+        </div>
+    </div>
+    <div class="container">
+        <h1><i>Mentor registeration</i></h1>
+        <div class="form-wrapper">
+            <form id="mentor-registration-form">
+                <div class="form-group">
+                    <label for="name">Name:</label>
+                    <input type="text" id="name" name="name" placeholder="Name" required>
+                </div>
+                <div class="form-group">
+                    <label for="email">Email:</label>
+                    <input type="email" id="email" name="email" placeholder="Email" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Password:</label>
+                    <input type="password" id="password" name="password" placeholder="Password" required>
+                </div>
+                <div class="form-group">
+                    <label for="mentorId">Mentor ID:</label>
+                    <input type="text" id="mentorId" name="mentorId" placeholder="Mentor ID" required>
+                </div>
+                <button type="submit">Register</button>
+            </form>
+        </div>
+        <div class="footer">
+            &copy; 2024 Mentor-Mentee Project. All rights reserved.
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('mentor-registration-form').addEventListener('submit', async (event) => {
+            event.preventDefault();
+
+            const formData = {
+                name: event.target.name.value,
+                email: event.target.email.value,
+                password: event.target.password.value,
+                mentorId: event.target.mentorId.value
+            };
+
+            const response = await fetch('/api/mentors/register', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(formData)
+            });
+
+            const result = await response.json();
+            if (response.ok) {
+                alert('Mentor registered successfully');
+            } else {
+                alert(`Error: ${result.msg}`);
+            }
+        });
+    </script>
+</body>
+</html>

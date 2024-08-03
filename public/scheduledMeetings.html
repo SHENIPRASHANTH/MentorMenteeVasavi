@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scheduled Meetings</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: left;
+        }
+        th {
+            background-color: #f4f4f4;
+        }
+        a.button {
+            display: inline-block;
+            padding: 10px 20px;
+            margin-bottom: 20px;
+            background-color: #007bff;
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+        }
+        a.button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <a href="mentorDashboard.html" class="button">Back</a>
+    <h1>Scheduled Meetings</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>Title</th>
+                <th>Date</th>
+                <th>Time</th>
+                <th>Description</th>
+                <th>Zoom Link</th>
+            </tr>
+        </thead>
+        <tbody id="meetings-list">
+            <!-- Meetings will be populated by JavaScript -->
+        </tbody>
+    </table>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            try {
+                // Fetch the list of meetings
+                const response = await fetch('/api/meetings');
+                if (!response.ok) throw new Error('Failed to fetch meetings');
+                const meetings = await response.json();
+
+                // Get the table body element to display meetings
+                const meetingsList = document.getElementById('meetings-list');
+                
+                // Iterate through each meeting and add it as a row in the table
+                meetings.forEach(meeting => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${meeting.title}</td>
+                        <td>${new Date(meeting.date).toLocaleDateString()}</td>
+                        <td>${meeting.time}</td>
+                        <td>${meeting.description || 'No description'}</td>
+                        <td><a href="${meeting.zoomLink}" target="_blank">${meeting.zoomLink}</a></td>
+                    `;
+                    meetingsList.appendChild(row);
+                });
+            } catch (error) {
+                console.error('Error fetching meetings:', error);
+                alert('Error fetching meetings');
+            }
+        });
+    </script>
+</body>
+</html>

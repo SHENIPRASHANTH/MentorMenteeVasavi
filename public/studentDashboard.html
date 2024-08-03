@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Roboto', sans-serif;
+            background-color: #f4f6f9;
+            color: #333;
+            padding: 20px;
+        }
+        h1, h2, p, label, button {
+            font-family: 'Roboto', sans-serif;
+        }
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+            margin-top: 20px;
+        }
+        p {
+            text-align: center;
+            color: #555;
+            font-size: 1.1em;
+        }
+        h2 {
+            color: #2c3e50;
+            margin-top: 30px;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            cursor: pointer;
+        }
+        section {
+            max-width: 600px;
+            margin: 20px auto;
+            padding: 10px;
+            background-color: #ffffff;
+            border-radius: 5px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            display: none;
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+        label {
+            margin-bottom: 5px;
+        }
+        input, select {
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1em;
+            background-color: #ffffff;
+            color: #333;
+        }
+        button {
+            padding: 15px;
+            font-size: 1.2em;
+            background-color: #3498db;
+            border: none;
+            border-radius: 5px;
+            color: #fff;
+            cursor: pointer;
+            transition: background-color 0.3s, color 0.3s;
+            margin: 10px 0;
+        }
+        button:hover {
+            background-color: #2980b9;
+        }
+        .logout-button {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            padding: 10px 20px;
+            font-size: 1em;
+            background-color: #3498db;
+            border: none;
+            border-radius: 5px;
+            color: #fff;
+            cursor: pointer;
+            transition: background-color 0.3s, color 0.3s;
+            text-decoration: none;
+        }
+        .logout-button:hover {
+            background-color: #2980b9;
+        }
+        #meetings-list {
+            list-style-type: none;
+            padding: 0;
+        }
+        #meetings-list li {
+            margin-bottom: 10px;
+            padding: 10px;
+            border-radius: 5px;
+            background-color: #f4f6f9;
+        }
+    </style>
+</head>
+<body>
+    <a href="index.html" class="logout-button">Logout</a>
+    <h1>Welcome to Student Dashboard</h1>
+    <p>This is the student dashboard. You can manage your attendance, certificates, academic percentage, and view upcoming meetings here.</p>
+
+    <h2 onclick="toggleSection('attendance-section')">Add Attendance</h2>
+    <section id="attendance-section">
+        <form id="attendance-form">
+            <label for="attendance-date">Date:</label>
+            <input type="date" id="attendance-date" name="date" required>
+            <label for="attendance-status">Status:</label>
+            <select id="attendance-status" name="status" required>
+                <option value="Present">Present</option>
+                <option value="Absent">Absent</option>
+            </select>
+            <button type="submit">Add Attendance</button>
+        </form>
+    </section>
+
+    <h2 onclick="toggleSection('certificate-section')">Add Hackathon Certificate</h2>
+    <section id="certificate-section">
+        <form id="certificate-form">
+            <label for="certificate-name">Certificate Name:</label>
+            <input type="text" id="certificate-name" name="name" required>
+            <label for="certificate-date">Date:</label>
+            <input type="date" id="certificate-date" name="date" required>
+            <label for="certificate-file">Upload Certificate:</label>
+            <input type="file" id="certificate-file" name="file" accept="application/pdf, image/*" required>
+            <button type="submit">Add Certificate</button>
+        </form>
+    </section>
+    
+
+    <h2 onclick="toggleSection('academic-section')">Add Academic Percentage</h2>
+    <section id="academic-section">
+        <form id="academic-form">
+            <label for="semester">Semester:</label>
+            <input type="number" id="semester" name="semester" required>
+            
+            <label for="subject">Subject:</label>
+            <input type="text" id="subject" name="subject" required>
+            
+            <label for="mid1">Mid 1 Marks:</label>
+            <input type="number" id="mid1" name="mid1" step="0.01" required>
+            
+            <label for="mid2">Mid 2 Marks:</label>
+            <input type="number" id="mid2" name="mid2" step="0.01" required>
+            
+            <label for="semester-marks">Semester Marks:</label>
+            <input type="number" id="semester-marks" name="semesterMarks" step="0.01" required>
+            
+            <button type="submit">Add Academic Details</button>
+        </form>
+    </section>
+
+    <h2 onclick="window.location.href='scheduledMeetings.html'">Upcoming Meetings</h2>
+
+    <section id="meeting-section">
+        <div id="meeting-details">
+            <ul id="meetings-list"></ul>
+        </div>
+    </section>
+    <!-- Add this link/button to your existing student dashboard -->
+<a href="studentChat.html" class="btn">Post Query</a>
+<a href="goalDashboard.html" class="btn">View Performance</a>
+<a href="createGoal.html">set ur weekly goal</a>
+    </section>
+    <script>
+        function toggleSection(sectionId) {
+            const section = document.getElementById(sectionId);
+            section.style.display = section.style.display === 'block' ? 'none' : 'block';
+        }
+
+        document.getElementById('attendance-form').addEventListener('submit', async (event) => {
+            event.preventDefault();
+            const date = document.getElementById('attendance-date').value;
+            const status = document.getElementById('attendance-status').value;
+
+            try {
+                const response = await fetch('/api/students/attendance', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ date, status })
+                });
+
+                if (response.ok) {
+                    alert('Attendance added successfully');
+                    event.target.reset();
+                } else {
+                    const error = await response.json();
+                    alert(`Failed to add attendance: ${error.message}`);
+                }
+            } catch (error) {
+                console.error('Error adding attendance:', error);
+            }
+        });
+
+        document.getElementById('certificate-form').addEventListener('submit', async (event) => {
+    event.preventDefault();
+    const form = document.getElementById('certificate-form');
+    const formData = new FormData(form);
+
+    try {
+        const response = await fetch('/api/students/certificates', {
+            method: 'POST',
+            body: formData
+        });
+
+        if (response.ok) {
+            alert('Certificate added successfully');
+            form.reset();
+        } else {
+            const error = await response.json();
+            alert(`Failed to add certificate: ${error.message}`);
+        }
+    } catch (error) {
+        console.error('Error adding certificate:', error);
+    }
+});
+
+        document.getElementById('academic-form').addEventListener('submit', async (event) => {
+            event.preventDefault();
+            const semester = document.getElementById('semester').value;
+            const subject = document.getElementById('subject').value;
+            const mid1 = document.getElementById('mid1').value;
+            const mid2 = document.getElementById('mid2').value;
+            const semesterMarks = document.getElementById('semester-marks').value;
+
+            try {
+                const response = await fetch('/api/students/academics', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ semester, subject, mid1, mid2, semesterMarks })
+                });
+
+                if (response.ok) {
+                    alert('Academic details added successfully');
+                    event.target.reset();
+                } else {
+                    const error = await response.json();
+                    alert(`Failed to add academic details: ${error.message}`);
+                }
+            } catch (error) {
+                console.error('Error adding academic details:', error);
+            }
+        });
+        const studentName = '<%= studentName %>'; // Adjust this according to how you're getting the studentName
+
+function viewPerformance() {
+    // Redirect to the performance page for the logged-in student
+    window.location.href = `/performance/${studentName}`;
+}
+
+    </script>
+</body>
+</html>

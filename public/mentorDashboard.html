@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mentor Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Roboto', sans-serif;
+            background-color: #f4f6f9;
+            color: #333;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            animation: fadeIn 1.4s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(100px);
+            }
+            to {
+                opacity: 0.9;
+                transform: translateY(0px);
+            }
+        }
+
+        h1, h2 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        p {
+            text-align: center;
+            color: #7f8c8d;
+            margin-bottom: 40px;
+        }
+
+        .section {
+            margin-bottom: 50px;
+        }
+
+        .card {
+            background-color: #ecf0f1;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 15px;
+            cursor: pointer;
+            transition: background-color 0.3s, box-shadow 0.3s;
+            position: relative;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .card:hover {
+            background-color: #dfe6e9;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        .details {
+            display: none;
+            background-color: #f5f5f5;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 15px;
+        }
+
+        button, .logout-button {
+            display: inline-block;
+            padding: 12px 25px;
+            font-size: 16px;
+            font-weight: 500;
+            background-color: #3498db;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            text-align: center;
+            transition: background-color 0.3s;
+            text-decoration: none;
+            margin-top: 10px;
+        }
+
+        button:hover, .logout-button:hover {
+            background-color: #2980b9;
+        }
+
+        .logout-button {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 600px) {
+            body {
+                padding: 10px;
+            }
+
+            .container {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <a href="index.html" class="logout-button">Logout</a>
+    <div class="container">
+        <h1>Welcome to Mentor Dashboard</h1>
+        <p>This is the mentor dashboard. You can manage your students and view their performance here.</p>
+
+        <div class="section">
+            <h2>Your Students</h2>
+            <div id="students-list" class="card-container"></div>
+        </div>
+
+        <div class="section">
+            <h2>Meetings</h2>
+            <button id="create-meeting-btn">Create Meeting</button>
+            <button id="view-meetings-btn">View Scheduled Meetings</button>
+        </div>
+
+        <div class="section">
+            <h2>Queries</h2>
+            <button id="view-queries-btn">View Queries</button>
+            <div id="queries-list"></div>
+        </div>
+    </div>
+    <a href="mentorChat.html">chat</a>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            const mentorName = 'Srikanth'; // Replace with actual mentor name from session
+
+            // Fetch queries for the mentor
+            document.getElementById('view-queries-btn').addEventListener('click', async () => {
+                try {
+                    const response = await fetch(`/queries/queries?mentorName=${encodeURIComponent(mentorName)}`);
+                    if (!response.ok) throw new Error('Failed to fetch queries');
+                    const queries = await response.json();
+
+                    const queriesList = document.getElementById('queries-list');
+                    queriesList.innerHTML = queries.length > 0 
+                        ? queries.map(query => `
+                            <div class="card">
+                                <strong>Student Name:</strong> ${query.studentName} <br>
+                                <strong>Query:</strong> ${query.queryText} <br>
+                                <strong>Status:</strong> ${query.status} <br>
+                                <small>Submitted on: ${new Date(query.createdAt).toLocaleString()}</small>
+                            </div>
+                        `).join('')
+                        : '<p>No queries found</p>';
+                } catch (error) {
+                    console.error('Error fetching queries:', error);
+                }
+            });
+
+            // Fetch and display students
+            try {
+                const response = await fetch('/api/mentors/me');
+                if (!response.ok) throw new Error('Failed to fetch mentor data');
+                const mentor = await response.json();
+                const mentorId = mentor._id;
+
+                const studentsResponse = await fetch(`/api/mentors/${mentorId}/students`);
+                if (!studentsResponse.ok) throw new Error('Failed to fetch students');
+                const students = await studentsResponse.json();
+                const studentsListDiv = document.getElementById('students-list');
+
+                students.forEach(student => {
+                    const studentElement = document.createElement('div');
+                    studentElement.className = 'card';
+                    studentElement.innerHTML = `<strong>${student.name}</strong>`;
+                    studentElement.addEventListener('click', async () => {
+                        let detailsDiv = studentElement.querySelector('.details');
+                        if (!detailsDiv) {
+                            const detailsResponse = await fetch(`/api/students/${student._id}/details`);
+                            if (!detailsResponse.ok) throw new Error('Failed to fetch student details');
+                            const studentDetails = await detailsResponse.json();
+                            
+                            const performanceResponse = await fetch(`/api/students/${student._id}/performance`);
+                            if (!performanceResponse.ok) throw new Error('Failed to fetch student performance');
+                            const studentPerformance = await performanceResponse.json();
+
+                            detailsDiv = document.createElement('div');
+                            detailsDiv.className = 'details';
+                            detailsDiv.innerHTML = `
+                                <h3>Student Details</h3>
+                                <p><strong>Name:</strong> ${studentDetails.name}</p>
+                                <p><strong>Roll Number:</strong> ${studentDetails.rollNumber}</p>
+                                <p><strong>Parent Email:</strong> <a href="mailto:${studentDetails.parentEmail}">${studentDetails.parentEmail}</a></p>
+                                <p><strong>Parent Phone:</strong> ${studentDetails.parentPhone}</p>
+                                <p><strong>Student Phone:</strong> ${studentDetails.studentPhone}</p>
+                                <p><strong>Mentor:</strong> ${studentDetails.mentor ? studentDetails.mentor.name : 'No mentor assigned'}</p>
+                                
+                                <h4>Attendance</h4>
+                                <ul>
+                                    ${studentPerformance.attendance.map(record => `<li>Date: ${new Date(record.date).toLocaleDateString()}, Status: ${record.status}</li>`).join('')}
+                                </ul>
+                                
+                                <h4>Certificates</h4>
+                                <ul>
+                                    ${studentPerformance.certificates.map(cert => `<li>Certificate Name: ${cert.name}, Date: ${new Date(cert.date).toLocaleDateString()}</li>`).join('')}
+                                </ul>
+                                
+                                <h4>Academic Percentage</h4>
+                                <ul>
+                                    ${studentPerformance.academics.map(academic => `<li>Semester: ${academic.semester}, Subject: ${academic.subject}, Mid1: ${academic.mid1}, Mid2: ${academic.mid2}, Semester Marks: ${academic.semesterMarks}</li>`).join('')}
+                                </ul>
+                            `;
+                            studentElement.appendChild(detailsDiv);
+                        }
+                        detailsDiv.style.display = detailsDiv.style.display === 'none' ? 'block' : 'none';
+                    });
+                    studentsListDiv.appendChild(studentElement);
+                });
+
+                document.getElementById('create-meeting-btn').addEventListener('click', () => {
+                    window.location.href = 'createMeeting.html'; // Link to create meeting page
+                });
+
+                document.getElementById('view-meetings-btn').addEventListener('click', () => {
+                    window.location.href = 'scheduledMeetings.html'; // Link to scheduled meetings page
+                });
+
+            } catch (error) {
+                console.error('Error initializing dashboard:', error);
+                alert('Error initializing dashboard');
+            }
+        });
+        document.addEventListener('DOMContentLoaded', async () => {
+    try {
+        // Fetch mentor's information from the backend or session
+        const response = await fetch('/api/mentors/me'); // Endpoint to fetch logged-in mentor's details
+        if (!response.ok) throw new Error('Failed to fetch mentor data');
+        const mentor = await response.json();
+        const mentorName = mentor.name; // Assuming mentor object has a 'name' field
+
+        // Set up the "View Queries" button action
+        document.getElementById('view-queries-btn').addEventListener('click', () => {
+            window.location.href = `querieslist.html?mentorName=${encodeURIComponent(mentorName)}`;
+        });
+
+        // Other initialization code for the mentor dashboard
+        // ...
+
+    } catch (error) {
+        console.error('Error initializing dashboard:', error);
+        alert('Error initializing dashboard. Please try again.');
+    }
+});
+
+    </script>
+</body>
+</html>

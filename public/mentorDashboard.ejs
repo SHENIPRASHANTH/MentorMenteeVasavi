@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Mentor Dashboard</title>
+</head>
+<body>
+    <h1>Mentor Dashboard</h1>
+
+    <h2>Meetings</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Student</th>
+                <th>Date</th>
+                <th>Time</th>
+                <th>Agenda</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% meetings.forEach(meeting => { %>
+                <tr>
+                    <td><%= meeting.student.name %> (<%= meeting.student.email %>)</td>
+                    <td><%= new Date(meeting.date).toLocaleDateString() %></td>
+                    <td><%= meeting.time %></td>
+                    <td><%= meeting.agenda %></td>
+                </tr>
+            <% }) %>
+        </tbody>
+    </table>
+</body>
+</html>
